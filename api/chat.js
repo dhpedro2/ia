@@ -4,14 +4,15 @@ import fetch from "node-fetch";
 const OPENROUTER_API_KEY = "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";
 
 export default async function handler(req, res) {
-  // Liberar CORS para qualquer origem (para teste)
+  // Liberação total de CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
+  // Preflight
   if (req.method === "OPTIONS") {
-    // Resposta para preflight
-    return res.status(200).end();
+    res.status(200).end();
+    return;
   }
 
   if (req.method !== "POST") {
@@ -29,24 +30,18 @@ export default async function handler(req, res) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+        "Authorization": `Bearer ${OPENROUTER_API_KEY}`
       },
       body: JSON.stringify({
         model: model || "gpt-4o-mini",
-        messages,
+        messages
       }),
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      return res.status(response.status).json({ error: errorText });
-    }
-
     const data = await response.json();
-    return res.status(200).json(data);
 
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return res.status(200).json(data);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   }
 }
-
