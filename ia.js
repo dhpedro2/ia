@@ -1,5 +1,5 @@
 (async () => {
-  const pergunta = prompt("Digite sua pergunta:");
+  const pergunta = prompt("Digite:");
   if (!pergunta) return;
 
   try {
